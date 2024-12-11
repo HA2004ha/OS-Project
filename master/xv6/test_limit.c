@@ -21,7 +21,7 @@ int main() {
 
     // 25 test
     printf(1, "\n--- Task with 25% CPU Limit ---\n");
-    set_limit(25);
+    set_limit(25,0);
     start_time = uptime();
     loop(1e9);
     end_time = uptime();
@@ -30,7 +30,7 @@ int main() {
     
     // 50 test
     printf(1, "\n--- Task with 50% CPU Limit ---\n");
-    set_limit(50);    
+    set_limit(50,0);    
     start_time = uptime();
     loop(1e9);
     end_time = uptime();
@@ -39,7 +39,7 @@ int main() {
 
     // 75 test
     printf(1, "\n--- Task with 75% CPU Limit ---\n");
-    set_limit(75);    
+    set_limit(75,0);    
     start_time = uptime();
     loop(1e9);
     end_time = uptime();
