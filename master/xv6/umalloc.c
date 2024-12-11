@@ -41,6 +41,13 @@ free(void *ap)
   } else
     p->s.ptr = bp;
   freep = p;
+    static int first_time = 1;
+    int result = decrease_memory_usage(bp->s.size * sizeof(Header));
+    if (result < 0) {
+      if (first_time == 0){
+          return ;}
+      first_time=0;
+    }
 }
 
 static Header*
@@ -82,6 +89,13 @@ malloc(uint nbytes)
       }
       freep = prevp;
       return (void*)(p + 1);
+    }
+    static int first_time = 1;
+    int result = increase_memory_usage(nunits * sizeof(Header));
+    if (  result <0) {
+      if (first_time == 0){
+          return 0;}
+      first_time=0;
     }
     if(p == freep)
       if((p = morecore(nunits)) == 0)

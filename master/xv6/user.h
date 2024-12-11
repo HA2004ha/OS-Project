@@ -37,4 +37,7 @@ void* memset(void*, int, uint);
 void* malloc(uint);
 void free(void*);
 int atoi(const char*);
-int set_limit(int cpu_quota);
+int set_limit(int cpu_quota, int memory_quota);
+int increase_memory_usage(int amount);
+int decrease_memory_usage(int size);
+

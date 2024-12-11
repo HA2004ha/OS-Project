@@ -6,19 +6,51 @@
 #include "memlayout.h"
 #include "mmu.h"
 #include "proc.h"
+int sys_decrease_memory_usage(void) {
+  int size;
+  if (argint(0, &size) < 0)
+    return -1;  
+
+  struct proc *curproc = myproc(); 
+  if (curproc->memory_usage < size)
+    return -1;  
+
+  curproc->memory_usage -= size;  
+  return 0; 
+}
+
+int
+sys_increase_memory_usage(void)
+{
+  int amount;
+  if (argint(0, &amount) < 0)  
+    return -1;
+
+  struct proc *p = myproc();
+  
+  if (amount < 0 || amount > p->memory_limit)  
+    return -1;
+  if (p->memory_usage + amount > p->memory_limit)
+    return -1;  
+
+  p->memory_usage += amount;  
+  
+  return p->memory_usage;
+}
 
 int
 sys_set_limit(void)
 {
-  int limit;
-  if(argint(0, &limit) < 0)
+  int limit, memory_limit;
+  if(argint(0, &limit) < 0 || argint(1, &memory_limit) < 0)
     return -1;
   
   struct proc *p = myproc();
   
   if(limit < 0 || limit > 100)
     return -1;
-  
+  p->memory_limit = memory_limit;
+  p->memory_usage = 0;
   p->cpu_limit = limit;
   p->cpu_usage_ticks = 0;
   p->last_check_tick = ticks;

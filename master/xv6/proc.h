@@ -36,6 +36,8 @@ enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
 // Per-process state
 struct proc {
+  uint memory_usage; 
+  uint memory_limit; 
   uint cpu_usage_ticks;
   uint last_check_tick;
   int cpu_limit;    
