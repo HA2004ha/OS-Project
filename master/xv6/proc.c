@@ -336,14 +336,30 @@ scheduler(void)
       if(p->state != RUNNABLE)
         continue;
 
+      uint current_tick = ticks;
+      uint elapsed_ticks = current_tick - p->last_check_tick;
+
+      if (elapsed_ticks >= 100) { //100 Ticks = 1s
+          p->cpu_usage_ticks = 0;
+          p->last_check_tick = current_tick;
+      }
+
+      int max_allowed_ticks = elapsed_ticks * (p->cpu_limit / 100.0);
+
+      if (p->cpu_limit > 0 && p->cpu_usage_ticks >= max_allowed_ticks) {
+          continue;
+      }
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
       c->proc = p;
       switchuvm(p);
       p->state = RUNNING;
-
+      uint start_tick = ticks;
       swtch(&(c->scheduler), p->context);
+      uint end_tick = ticks;
+
+      p->cpu_usage_ticks += (end_tick - start_tick);
       switchkvm();
 
       // Process is done running for now.

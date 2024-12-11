@@ -8,6 +8,25 @@
 #include "proc.h"
 
 int
+sys_set_limit(void)
+{
+  int limit;
+  if(argint(0, &limit) < 0)
+    return -1;
+  
+  struct proc *p = myproc();
+  
+  if(limit < 0 || limit > 100)
+    return -1;
+  
+  p->cpu_limit = limit;
+  p->cpu_usage_ticks = 0;
+  p->last_check_tick = ticks;
+  
+  return 0;
+}
+
+int
 sys_fork(void)
 {
   return fork();
