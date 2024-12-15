@@ -27,6 +27,12 @@ free(void *ap)
   Header *bp, *p;
 
   bp = (Header*)ap - 1;
+  int result;
+  if (bp->s.size * sizeof(Header)>32000){result = 0;}
+  else{result = decrease_memory_usage(bp->s.size * sizeof(Header)-8);}
+  if (result < 0) {
+    return;}
+    
   for(p = freep; !(bp > p && bp < p->s.ptr); p = p->s.ptr)
     if(p >= p->s.ptr && (bp > p || bp < p->s.ptr))
       break;
@@ -41,13 +47,6 @@ free(void *ap)
   } else
     p->s.ptr = bp;
   freep = p;
-    static int first_time = 1;
-    int result = decrease_memory_usage(bp->s.size * sizeof(Header));
-    if (result < 0) {
-      if (first_time == 0){
-          return ;}
-      first_time=0;
-    }
 }
 
 static Header*
@@ -78,6 +77,12 @@ malloc(uint nbytes)
     base.s.ptr = freep = prevp = &base;
     base.s.size = 0;
   }
+
+  int result;
+  if (nbytes<100){result = 0;}
+  else{result = increase_memory_usage(nbytes);}
+  if (result<0){return 0;}
+
   for(p = prevp->s.ptr; ; prevp = p, p = p->s.ptr){
     if(p->s.size >= nunits){
       if(p->s.size == nunits)
@@ -89,13 +94,6 @@ malloc(uint nbytes)
       }
       freep = prevp;
       return (void*)(p + 1);
-    }
-    static int first_time = 1;
-    int result = increase_memory_usage(nunits * sizeof(Header));
-    if (  result <0) {
-      if (first_time == 0){
-          return 0;}
-      first_time=0;
     }
     if(p == freep)
       if((p = morecore(nunits)) == 0)

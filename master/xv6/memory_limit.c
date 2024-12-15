@@ -2,43 +2,41 @@
 #include "stat.h"
 #include "user.h"
 
-#define ALLOCATION_SIZE 128 * 1024  
-#define MEMORY_LIMIT 512*1024   
-#define MAX_ALLOCS 10
-
 int main() {
-    int i;
-    void* ptr[MAX_ALLOCS];  
+    printf(1, "Memory Allocation Test\n");
 
-    set_limit(0, MEMORY_LIMIT);
+    int limit = 1024; 
+    printf(1, "Setting memory limit to %d bytes...\n", limit);
+    set_limit(100,limit);
 
-    for (i = 0; i < MAX_ALLOCS; i++) {
-        ptr[i] = malloc(ALLOCATION_SIZE);
-        if (ptr[i] == 0) {
-            printf(1, "Allocation failed at iteration %d\n", i);
-        } else {
-            increase_memory_usage(ALLOCATION_SIZE);
-            printf(1, "Allocation succeeded at iteration %d\n", i);
-        }
-        
-    }
+    int alloc_size = 512;
+    printf(1, "Allocating %d bytes...\n", alloc_size);
+    void *mem1 = malloc(alloc_size);
 
-    for (i = 0; i < MAX_ALLOCS; i++) {
-        if (ptr[i] != 0) {
-            free(ptr[i]);  
-            decrease_memory_usage(ALLOCATION_SIZE);  
-            printf(1, "Freed memory at iteration %d\n", i);
-        }
+    if (mem1 == 0) {
+        printf(1, "Allocation failed for %d bytes.\n", alloc_size);
+    } else {
+        printf(1, "Allocation succeeded for %d bytes.\n", alloc_size);
     }
-    for (i = 0; i < MAX_ALLOCS; i++) {
-        ptr[i] = malloc(ALLOCATION_SIZE);
-        if (ptr[i] == 0) {
-            printf(1, "Allocation failed at iteration %d\n", i);
-        } else {
-            increase_memory_usage(ALLOCATION_SIZE);
-            printf(1, "Allocation succeeded at iteration %d\n", i);
-        } 
+    alloc_size = 600;
+    printf(1, "Allocating %d bytes...\n", alloc_size);
+    void *mem2 = malloc(alloc_size);
+    
+    if (mem2 == 0) {
+        printf(1, "Allocation failed for %d bytes.\n", alloc_size);
+    } else {
+        printf(1, "Allocation succeeded for %d bytes.\n", alloc_size);
     }
-    printf(1, "Test finished\n");
+    printf(1, "Freeing first allocation...\n");
+    free(mem1);
+    alloc_size = 600;
+    printf(1, "Allocating %d bytes...\n", alloc_size);
+    void *mem3 = malloc(alloc_size);
+    if (mem3 == 0) {
+        printf(1, "Allocation failed for %d bytes.\n", alloc_size);
+    } else {
+        printf(1, "Allocation succeeded for %d bytes.\n", alloc_size);
+    }
+    printf(1, "Memory Allocation Test Completed.\n");
     exit();
 }
